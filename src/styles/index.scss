@@ -1,8 +1,13 @@
+@use 'sass:list';
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 30px;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 * {
@@ -11,6 +16,10 @@ body {
 
 $gap: 1px;
 $width1: 100px;
+$weekdays: mon, tue, wed, thu, fri, sat, sun;
+$calendar--month-length-31: (
+  'some-name': 1,
+);
 
 .calendar {
   display: flex;
@@ -31,22 +40,31 @@ $width1: 100px;
     justify-content: center;
     align-items: center;
 
-    &:first-child {
-      margin-left: ($width1 + $gap) * 6;
-    }
-
-  @for $i from 1 through 31 {
-    &:nth-child(#{$i})::before {
-      content:"#{$i}"
+    @for $i from 1 through 31 {
+      &:nth-child(#{$i})::before {
+        content: '#{$i}';
+      }
     }
   }
 
-  }
-}
+  @each $day in $weekdays {
+    $index: list.index($weekdays, $day) - 1;
 
-.calendar__day:hover {
-  cursor: pointer;
-  transition-duration: 0.5s;
-  background-color: #ffbfcb;
-  transform: translateY(-20px);
+    &--start-day-#{$day} &__day:first-child {
+      margin-left: ($width1 + $gap) * $index;
+    }
+  }
+
+  @for $len from 1 through 31 {
+    &--month-length-#{$len} &__day:nth-child(n + #{$len + 1}) {
+      display: none;
+    }
+  }
+
+  .calendar__day:hover {
+    cursor: pointer;
+    transition-duration: 0.5s;
+    background-color: #ffbfcb;
+    transform: translateY(-20px);
+  }
 }
